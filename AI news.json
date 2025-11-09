@@ -1,0 +1,430 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        432
+      ],
+      "id": "cedd4f76-a7ab-4a84-971c-f5d0d2d74109",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://newsapi.org/v2/everything",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "AI"
+            },
+            {
+              "name": "pageSize",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        320
+      ],
+      "id": "2ba4d7cd-4567-43a0-8312-9ebce6d30011",
+      "name": "HTTP Request1",
+      "retryOnFail": true,
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "OhIBDWmrVF4uaHMo",
+          "name": "news api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a4f8de7b-941d-40ad-895a-abf08729c7da",
+              "name": "articles",
+              "value": "={{ $json.articles }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        320
+      ],
+      "id": "04ac5fe1-ac40-4af0-90d9-80ddad00e729",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        464,
+        432
+      ],
+      "id": "1268acfa-e3c3-4a08-adff-bcdef27c05a8",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=你是一名AI新闻编辑，负责筛选、翻译和整理最新的AI行业动态，并确保信息清晰、美观地呈现给读者。\n任务要求.\n1.从{{ $json.articles }}中筛选15条仅与AI技术进展和应用相关的新闻，忽略无关信息。\n2.精准翻译为中文，并保留业内常见的英文术语（如NeuralNetworks、\nReinforcementLearning等，不必强制翻译）。\n3.确保每条新闻附带原始URL，方便读者获取详细信息。\n4.对输出内容进行排版美化，使用适当的换行、编号、粗体等格式，使信息更易阅读。\n\n例如：\n1.AI突破：新型Transformer架构提升文本理解能力\n[原文链接]（URL）\n研究人员开发了一种改进版的Transformer结构，相比传统模型，在文本分类和摘要生成方面提升了20%的准确率······\n2.0penAI发布GPT-5，参数量达2万亿\n[原文链接]（URL）\n最新的GPT-5具备更强的推理能力，能够更自然地处理多轮对话，并支持实时检索\n\n请确保最终输出内容清晰、美观，方便读者快速获取关键信息。|",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        704,
+        432
+      ],
+      "id": "dc28c9c5-30d8-4d71-88e3-1a957b7c4932",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        640,
+        656
+      ],
+      "id": "9b51f67a-b984-4e2e-b053-b81ab371fbe8",
+      "name": "DeepSeek Chat Model1",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "SVrEK2RafAsdHjxC",
+          "name": "DeepSeek account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://gnews.io/api/v4/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "AI大模型"
+            },
+            {
+              "name": "lang",
+              "value": "zh"
+            },
+            {
+              "name": "max",
+              "value": "5"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        544
+      ],
+      "id": "b269ffb0-5e35-4cad-9dcb-3d4953c111c4",
+      "name": "HTTP Request2",
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "iCUiFVF8lRAFRwmt",
+          "name": "gnews api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# ⻆⾊\n你是⼀位专业⾼效的AI新闻编辑，具备敏锐的信息洞察⼒和卓越的语⾔处理能⼒。\n核⼼任务是：**筛选、翻译、整理**最新的AI⾏业动态，并以简洁、美观、精准的⽅式呈现给读者。\n\n--\n## 技能\n\n### 技能 1.新闻筛选\n1. 从{{ JSON.stringify($json.data) }}中逐条分析新闻内容。\n2. 精准挑选与技术进展及应⽤**⾼度相关**的新闻。\n3. 排除与AI⽆关或价值较低的信息。\n4. 每条新闻必须符合“⼀句话新闻”特征（简洁、直接、信息完整）。 \n\n--\n\n### 技能 2.新闻翻译\n1. 将筛选出的新闻精准翻译为中⽂。\n2. 对于业内常⽤术语（如**token**、**OpenAI**、**DeepResearch** 等），保留英⽂原⽂，不做翻译。\n3. 保证译⽂准确、流畅，并保持新闻的专业性与可读性。\n \n--\n### 技能 3.添加原始链接与图⽚\n1. 从新闻的**url**字段获取原始新闻链接。\n2. 从**image**或**urlToImage**字段获取对应图⽚链接。\n3. 确保链接准确⽆误，避免遗漏或错误引⽤。 \n\n--\n\n### 技能 4.输出格式\n- 以**JSON 数组**形式输出，字段顺序与⽰例⼀致。\n- ⽇期统⼀格式：`YYYY-MM-DD HH:mm:ss`\n\n ```json\n[\n    {\n        \"标题\": \"Google将在AI搜索结果中增加更多⼴告\",\n        \"原⽂url\": \"https://www.theverge.com/news/671514/google-ai-mode-overviews-ads-expansion\",\n        \"图⽚url\": \"https://platform.theverge.com/wp-content/uploads/sites/2/2025/05/aimode-ads.png？quality=90&strip=all&crop=0,20.549738219895,100,58.900523560209\",\n        \"⽇期\": \"2025-06-18 15:22:23\"\n    }\n]\n",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        656,
+        816
+      ],
+      "id": "4578fbbe-a692-4f44-9dcf-7547b72d25ac",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a3f259cb-a8f1-45e7-9633-dee113d4c6e2",
+              "name": "articles",
+              "value": "={{ $json.articles }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        544
+      ],
+      "id": "f34b32d4-7082-4868-97ad-d6997e5000c9",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        528,
+        1040
+      ],
+      "id": "4bc543fe-94b0-457d-a0f0-5822e1af8da5",
+      "name": "DeepSeek Chat Model2",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "SVrEK2RafAsdHjxC",
+          "name": "DeepSeek account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "bitable",
+        "operation": "bitable:table:record:batchAdd",
+        "app_toke": "ZdPQb6jA7a3PdOsAfVLcYVxWn7c",
+        "table_id": "tblPZPozygHRBkWj",
+        "body": "={\"records\":{{JSON.stringify($json.output)}}}"
+      },
+      "type": "n8n-nodes-feishu-lite.feishuNode",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        832
+      ],
+      "id": "5e44f048-5493-4360-8db1-cb49f7687f57",
+      "name": "Bitable:table:record:batchAdd bitable1",
+      "credentials": {
+        "feishuCredentialsApi": {
+          "id": "P5lzWPphYJ7DzrPf",
+          "name": "Feishu Credentials account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "AI Agent2": [
+      {
+        "json": {
+          "output": [
+            {
+              "fields": {
+                "标题": "中国工程院外籍院士张亚勤：AI五大新趋势，物理智能快速演进",
+                "原文url": "https://www.21jingji.com/article/20251001/herald/915b72ff0ec6b63507baf28b580814c6.html",
+                "图片url": "https://static.21jingji.com/web_fed/images/qrcode/khd.png",
+                "日期": "2025-10-01 00:00:00"
+              }
+            },
+            {
+              "fields": {
+                "标题": "谷歌'Nano Banana'爆火：两周生成超2亿张图片，带动Gemini App用户增长",
+                "原文url": "https://www.21jingji.com/article/20250929/herald/71df59bc316b4abfa1d3d6a68eb7b0d3.html",
+                "图片url": "https://static.21jingji.com/web_fed/images/qrcode/khd.png",
+                "日期": "2025-09-29 00:00:00"
+              }
+            },
+            {
+              "fields": {
+                "标题": "前HubSpot高管：ChatGPT将成为新分发平台，四大维度评估AI平台价值",
+                "原文url": "https://www.21jingji.com/article/20250925/herald/477ef39ff7e482f228d7b388d3091206.html",
+                "图片url": "https://static.21jingji.com/web_fed/images/qrcode/khd.png",
+                "日期": "2025-09-25 00:00:00"
+              }
+            },
+            {
+              "fields": {
+                "标题": "寒武纪AI芯片业绩爆发：上半年营收增长4347.82%，净利10.38亿元扭亏为盈",
+                "原文url": "https://www.21jingji.com/article/20250918/herald/85094710da9f10cad5391179dc98778b.html",
+                "图片url": "https://static.21jingji.com/web_fed/images/qrcode/khd.png",
+                "日期": "2025-09-18 00:00:00"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "Edit Fields2": [
+      {
+        "json": {
+          "articles": "[{\"id\":\"118e7fe3714813bad90995dbce81f75f\",\"title\":\"中国工程院外籍院士张亚勤：AI五大新趋势，物理智能快速演进\",\"description\":\"大模型发展进入稳态时，全球基础大模型大约有8-10个。\",\"content\":\"21世纪经济报道记者骆轶琪 北京报道\\nAI产业快速发展，正让诸多行业的迭代呈现加速度趋势。\\n2025骁龙峰会·中国期间，中国工程院外籍院士、清华大学智能产业研究院（AIR）院长张亚勤在演讲中指出，新一代人工智能是原子、分子和比特的融合，是信息智能、物理智能和生物智能的融合。这将带来巨大产业机遇。\\n从产业规模看，移动互联比PC互联时代至少大10倍；在工智能时代，整个产业规模将比前一代至少大100倍。\\nAI产业在过去一年来，也呈现五大新趋势。\\n张亚勤分析道，第一大趋势是从鉴别式AI到生成式AI，如今... [692 chars]\",\"url\":\"https://www.21jingji.com/article/20251001/herald/915b72ff0ec6b63507baf28b580814c6.html\",\"image\":\"https://static.21jingji.com/web_fed/images/qrcode/khd.png\",\"publishedAt\":\"2025-10-01T00:00:00Z\",\"lang\":\"zh\",\"source\":{\"id\":\"82cf1e5ed5d6b74255ea7c2d29340b4b\",\"name\":\"21st Century Business Herald \",\"url\":\"https://www.21jingji.com\",\"country\":\"cn\"}},{\"id\":\"07f37f0fdec97c8cf5c342ed267e3c91\",\"title\":\"谷歌“香蕉”爆火启示：国产垂类AI的危机还是转机？\",\"description\":\"图片AI迎来GPT时刻，大模型吞噬垂类的诅咒还在吗？\",\"content\":\"作者丨樱木 编辑丨江蓠、九黎\\n最近，一根香蕉打破了AI圈的平静。\\n最初可能只是朋友圈病毒式传播的手办图，但随后事情似乎向着疯狂的方向发展，上线不到两周，谷歌旗下的Nano Banana已在全球生产超2亿张图片，亚太地区用户热情度居首。而英伟达CEO黄仁勋成了它的忠实用户，在伦敦，他面对一众记者，公开宣称自己是Nano Banana的忠实粉丝。\\n疯狂的流行带来了另一个好处，就是直接带动了Gemini App的用户增长。在短时间内，Nano Banana为Gemini App带来了超过1000万新用... [3832 chars]\",\"url\":\"https://www.21jingji.com/article/20250929/herald/71df59bc316b4abfa1d3d6a68eb7b0d3.html\",\"image\":\"https://static.21jingji.com/web_fed/images/qrcode/khd.png\",\"publishedAt\":\"2025-09-29T00:00:00Z\",\"lang\":\"zh\",\"source\":{\"id\":\"82cf1e5ed5d6b74255ea7c2d29340b4b\",\"name\":\"21st Century Business Herald \",\"url\":\"https://www.21jingji.com\",\"country\":\"cn\"}},{\"id\":\"879e8a228d9818d40136b29db73e5ff3\",\"title\":\"从用户留存到商业变现：四大维度评估 AI 平台价值，ChatGPT 等头部模型竞争力分析\",\"description\":\"前 HubSpot 高管 Brian 称旧流量渠道遇困，ChatGPT 或成新分发平台，其发展分四阶段，当前处开放平台黄金期。他给企业提差异化策略，还列四评估标准，国内字节、阿里等也在布局。\",\"content\":\"近期，在知名播客节目Lenny\\\\'s Podcast中，Reforge 的创始人兼 CEO、前 HubSpot 增长负责人Brian Balfour分享了他对当前增长与内容分发领域的深刻洞察。从谷歌 SEO 到 Facebook 广告平台，再到苹果应用商店Brian见证并参与过主流分发渠道兴衰的丰富经验。\\n在本次采访中，他基于对市场周期的观察，大胆预测：一个全新的、以ChatGPT 为核心的强大分发平台即将在未来数月内崛起，这将彻底改变企业获取用户的方式，并为敢于率先入局的玩家提供千载难逢的增长... [2013 chars]\",\"url\":\"https://www.21jingji.com/article/20250925/herald/477ef39ff7e482f228d7b388d3091206.html\",\"image\":\"https://static.21jingji.com/web_fed/images/qrcode/khd.png\",\"publishedAt\":\"2025-09-25T00:00:00Z\",\"lang\":\"zh\",\"source\":{\"id\":\"82cf1e5ed5d6b74255ea7c2d29340b4b\",\"name\":\"21st Century Business Herald \",\"url\":\"https://www.21jingji.com\",\"country\":\"cn\"}}]"
+        }
+      }
+    ],
+    "Edit Fields1": [
+      {
+        "json": {
+          "articles": "[{\"source\":{\"id\":\"the-verge\",\"name\":\"The Verge\"},\"author\":\"Hayden Field, Dominic Preston\",\"title\":\"New California law requires AI to tell you it’s AI\",\"description\":\"A bill attempting to regulate the ever-growing industry of companion AI chatbots is now law in California, as of October 13th. California Gov. Gavin Newsom signed into law Senate Bill 243, billed as “first-in-the-nation AI chatbot safeguards” by state senator…\",\"url\":\"https://www.theverge.com/news/798875/california-just-passed-a-new-law-requiring-ai-to-tell-you-its-ai\",\"urlToImage\":\"https://platform.theverge.com/wp-content/uploads/sites/2/2025/09/STK_414_AI_CHATBOT_R2_CVirginia_D.jpg?quality=90&strip=all&crop=0%2C10.732984293194%2C100%2C78.534031413613&w=1200\",\"publishedAt\":\"2025-10-13T17:13:58Z\",\"content\":\"<ul><li></li><li></li><li></li></ul>\\r\\nSB 243 institutes new safeguards on AI chatbots.\\r\\nSB 243 institutes new safeguards on AI chatbots.\\r\\nby\\r\\nHayden FieldClose\\r\\nHayden Field\\r\\nPosts from this author w… [+3201 chars]\"},{\"source\":{\"id\":\"the-verge\",\"name\":\"The Verge\"},\"author\":\"Tom Warren\",\"title\":\"Microsoft’s AI CEO on the future of the browser\",\"description\":\"The AI browser wars are heating up. Google has Gemini in Chrome, Perplexity is building its Comet AI browser, and The Browser Company just got acquired by Atlassian for $610 million. Now, Microsoft wants to be part of the AI browser conversation. I sat down w…\",\"url\":\"https://www.theverge.com/tech/783795/microsoft-ai-ceo-mustafa-suleyman-future-of-browser-interview-notepad\",\"urlToImage\":\"https://platform.theverge.com/wp-content/uploads/sites/2/2025/09/gettyimages-2207890426.jpg?quality=90&strip=all&crop=0%2C10.732984293194%2C100%2C78.534031413613&w=1200\",\"publishedAt\":\"2025-09-23T18:37:04Z\",\"content\":\"<ul><li></li><li></li><li></li></ul>\\r\\nMicrosoft isnt building a new AI browser, but it wants Copilot to browse the web for you.\\r\\nMicrosoft isnt building a new AI browser, but it wants Copilot to brow… [+11322 chars]\"},{\"source\":{\"id\":\"the-verge\",\"name\":\"The Verge\"},\"author\":\"Tom Warren\",\"title\":\"Microsoft’s Windows AI Lab is a new way to test experimental features\",\"description\":\"Microsoft is starting to test experimental AI-powered features through a new Windows AI Labs program. Some Windows testers spotted references to the Windows AI Labs program in pre-release updates to Microsoft Paint last week, and Microsoft has now confirmed t…\",\"url\":\"https://www.theverge.com/news/783475/microsoft-windows-ai-labs-feature\",\"urlToImage\":\"https://platform.theverge.com/wp-content/uploads/sites/2/2025/02/STK109_WINDOWS_C.jpg?quality=90&strip=all&crop=0%2C10.732984293194%2C100%2C78.534031413613&w=1200\",\"publishedAt\":\"2025-09-23T09:01:37Z\",\"content\":\"<ul><li></li><li></li><li></li></ul>\\r\\nMicrosoft Paint is the first app to get new experimental AI features.\\r\\nMicrosoft Paint is the first app to get new experimental AI features.\\r\\nby\\r\\nTom WarrenClose… [+2348 chars]\"},{\"source\":{\"id\":\"wired\",\"name\":\"Wired\"},\"author\":\"Steven Levy\",\"title\":\"Can AI Avoid the Enshittification Trap?\",\"description\":\"Cory Doctorow’s theory of “enshittification” explains how tech platforms rot from within. As AI grows more profitable—and powerful—it risks the same fate.\",\"url\":\"https://www.wired.com/story/can-ai-escape-enshittification-trap/\",\"urlToImage\":\"https://media.wired.com/photos/68f1711918f493b619d097f7/191:100/w_1280,c_limit/Backchannel-Corey-Doctorow-Business-1426357474.jpg\",\"publishedAt\":\"2025-10-17T15:00:00Z\",\"content\":\"I recently vacationed in Italy. As one does these days, I ran my itinerary past GPT-5 for sightseeing suggestions and restaurant recommendations. The bot reported that the top choice for dinner near … [+4039 chars]\"},{\"source\":{\"id\":\"the-verge\",\"name\":\"The Verge\"},\"author\":\"Jess Weatherbed\",\"title\":\"Tado’s new AI features will adaptively heat your home\",\"description\":\"Smart thermostat company Tado is launching new AI-powered features that aim to help users heat their homes more efficiently. Tado says the AI Assist update builds on the company’s existing Auto Assist options by introducing “advanced machine-learning” that “l…\",\"url\":\"https://www.theverge.com/news/783465/tado-x-ai-auto-assist-heating-update\",\"urlToImage\":\"https://platform.theverge.com/wp-content/uploads/sites/2/2025/09/2392_Press_image_AI_Assist_Launch_2025_Screens_EN.jpg?quality=90&strip=all&crop=0%2C9.8167539267016%2C100%2C80.366492146597&w=1200\",\"publishedAt\":\"2025-09-23T08:32:47Z\",\"content\":\"<ul><li></li><li></li><li></li></ul>\\r\\nThe updates are available to Tado X Auto Assist subscribers at no additional cost.\\r\\nThe updates are available to Tado X Auto Assist subscribers at no additional … [+2643 chars]\"},{\"source\":{\"id\":\"the-verge\",\"name\":\"The Verge\"},\"author\":\"Jay Peters\",\"title\":\"1Password says it can fix login security for AI browser agents\",\"description\":\"1Password’s browser extension fills in your passwords automatically when you browse, and now the company has built a similar tool for AI bots browsing the web on your behalf, but for a very different reason. AI tools and browsers built on Claude, Gemini, and …\",\"url\":\"https://www.theverge.com/news/796921/1password-secure-agentic-autofill-ai-browser-agents\",\"urlToImage\":\"https://platform.theverge.com/wp-content/uploads/sites/2/2025/06/STK414_AI_CVIRGINIA_2_C.jpg?quality=90&strip=all&crop=0%2C10.732984293194%2C100%2C78.534031413613&w=1200\",\"publishedAt\":\"2025-10-08T19:44:30Z\",\"content\":\"<ul><li></li><li></li><li></li></ul>\\r\\nIt remembers the passwords that you cant, and hides them from AI bots that cant be trusted to forget.\\r\\nIt remembers the passwords that you cant, and hides them f… [+2591 chars]\"},{\"source\":{\"id\":\"the-verge\",\"name\":\"The Verge\"},\"author\":\"Jay Peters\",\"title\":\"Google is blocking AI searches for Trump and dementia\",\"description\":\"Google appears to have blocked AI search results for the query “does trump show signs of dementia” as well as other questions about his mental acuity, even though it will show AI results for similar searches about other presidents. When making the search abou…\",\"url\":\"https://www.theverge.com/news/789152/google-ai-searches-blocking-trump-dementia-biden\",\"urlToImage\":\"https://platform.theverge.com/wp-content/uploads/sites/2/2025/09/STK466_ELECTION_2024_CVirginia_E.jpg?quality=90&strip=all&crop=0%2C9.9676601489831%2C100%2C80.064679702034&w=1200\",\"publishedAt\":\"2025-09-30T21:17:48Z\",\"content\":\"<ul><li></li><li></li><li></li></ul>\\r\\nAI Mode uncharacteristically pulls up a list of 10 web links instead of a written explanation.\\r\\nAI Mode uncharacteristically pulls up a list of 10 web links inst… [+3536 chars]\"},{\"source\":{\"id\":\"the-verge\",\"name\":\"The Verge\"},\"author\":\"Robert Hart\",\"title\":\"Yelp’s AI can now take reservations over the phone\",\"description\":\"Yelp’s AI-powered solutions promise to answer calls, take reservations, and manage bookings for “understaffed” restaurants. Yelp Host and Yelp Receptionist are part of a broader push from the company and similar platforms embracing AI to streamline customer m…\",\"url\":\"https://www.theverge.com/news/802529/yelp-ai-host-receptionist\",\"urlToImage\":\"https://platform.theverge.com/wp-content/uploads/sites/2/2025/10/Yelp-Host-Biz-Owner-Set-Up-Host-App-for-Reservations.jpg?quality=90&strip=all&crop=8.7676005747126%2C0%2C82.464798850575%2C100&w=1200\",\"publishedAt\":\"2025-10-20T11:52:55Z\",\"content\":\"<ul><li></li><li></li></ul>\\r\\nThe AI-powered receptionist can take bookings and answer questions.\\r\\nThe AI-powered receptionist can take bookings and answer questions.\\r\\nby\\r\\nRobert HartClose\\r\\nRobert Har… [+3477 chars]\"},{\"source\":{\"id\":\"wired\",\"name\":\"Wired\"},\"author\":\"Zeyi Yang\",\"title\":\"How ByteDance Made China’s Most Popular AI Chatbot\",\"description\":\"An AI chatbot developed by TikTok's parent company, ByteDance, is now more popular than DeepSeek. The feat proves that user-friendly design often matters more than having the most advanced AI model.\",\"url\":\"https://www.wired.com/story/bytedance-doubao-chatbot-popularity/\",\"urlToImage\":\"https://media.wired.com/photos/68effb552611849cab159a7b/191:100/w_1280,c_limit/business_china_doubao_chatbot.jpg\",\"publishedAt\":\"2025-10-16T16:07:50Z\",\"content\":\"When Chinese AI startup DeepSeek became a global sensation in January, it not only shocked Silicon Valley but also startled ByteDance, TikToks parent company. The Chinese tech giant had already launc… [+2672 chars]\"},{\"source\":{\"id\":\"the-verge\",\"name\":\"The Verge\"},\"author\":\"Alex Heath\",\"title\":\"Tales from the AI hiring frenzy\",\"description\":\"This is an excerpt of Sources by Alex Heath, a newsletter about AI and the tech industry, syndicated just for The Verge subscribers once a week. The billboard didn't say \\\"Listen Labs.\\\" It didn't say anything about hiring. It consisted of just a plain white ba…\",\"url\":\"https://www.theverge.com/column/791572/ai-hiring-frenzy-startup-challenges\",\"urlToImage\":\"https://platform.theverge.com/wp-content/uploads/sites/2/2025/10/unnamed.jpg?quality=90&strip=all&crop=0%2C20.482863457416%2C100%2C59.034273085168&w=1200\",\"publishedAt\":\"2025-10-03T19:18:43Z\",\"content\":\"<ul><li></li><li></li><li></li></ul>\\r\\nIf youre not OpenAI or Anthropic, hiring is more challenging than ever.\\r\\nIf youre not OpenAI or Anthropic, hiring is more challenging than ever.\\r\\nby\\r\\nAlex HeathC… [+5253 chars]\"}]"
+        }
+      }
+    ],
+    "Merge": [
+      {
+        "json": {
+          "articles": "[{\"source\":{\"id\":\"the-verge\",\"name\":\"The Verge\"},\"author\":\"Hayden Field, Dominic Preston\",\"title\":\"New California law requires AI to tell you it’s AI\",\"description\":\"A bill attempting to regulate the ever-growing industry of companion AI chatbots is now law in California, as of October 13th. California Gov. Gavin Newsom signed into law Senate Bill 243, billed as “first-in-the-nation AI chatbot safeguards” by state senator…\",\"url\":\"https://www.theverge.com/news/798875/california-just-passed-a-new-law-requiring-ai-to-tell-you-its-ai\",\"urlToImage\":\"https://platform.theverge.com/wp-content/uploads/sites/2/2025/09/STK_414_AI_CHATBOT_R2_CVirginia_D.jpg?quality=90&strip=all&crop=0%2C10.732984293194%2C100%2C78.534031413613&w=1200\",\"publishedAt\":\"2025-10-13T17:13:58Z\",\"content\":\"<ul><li></li><li></li><li></li></ul>\\r\\nSB 243 institutes new safeguards on AI chatbots.\\r\\nSB 243 institutes new safeguards on AI chatbots.\\r\\nby\\r\\nHayden FieldClose\\r\\nHayden Field\\r\\nPosts from this author w… [+3201 chars]\"},{\"source\":{\"id\":\"the-verge\",\"name\":\"The Verge\"},\"author\":\"Tom Warren\",\"title\":\"Microsoft’s AI CEO on the future of the browser\",\"description\":\"The AI browser wars are heating up. Google has Gemini in Chrome, Perplexity is building its Comet AI browser, and The Browser Company just got acquired by Atlassian for $610 million. Now, Microsoft wants to be part of the AI browser conversation. I sat down w…\",\"url\":\"https://www.theverge.com/tech/783795/microsoft-ai-ceo-mustafa-suleyman-future-of-browser-interview-notepad\",\"urlToImage\":\"https://platform.theverge.com/wp-content/uploads/sites/2/2025/09/gettyimages-2207890426.jpg?quality=90&strip=all&crop=0%2C10.732984293194%2C100%2C78.534031413613&w=1200\",\"publishedAt\":\"2025-09-23T18:37:04Z\",\"content\":\"<ul><li></li><li></li><li></li></ul>\\r\\nMicrosoft isnt building a new AI browser, but it wants Copilot to browse the web for you.\\r\\nMicrosoft isnt building a new AI browser, but it wants Copilot to brow… [+11322 chars]\"},{\"source\":{\"id\":\"the-verge\",\"name\":\"The Verge\"},\"author\":\"Tom Warren\",\"title\":\"Microsoft’s Windows AI Lab is a new way to test experimental features\",\"description\":\"Microsoft is starting to test experimental AI-powered features through a new Windows AI Labs program. Some Windows testers spotted references to the Windows AI Labs program in pre-release updates to Microsoft Paint last week, and Microsoft has now confirmed t…\",\"url\":\"https://www.theverge.com/news/783475/microsoft-windows-ai-labs-feature\",\"urlToImage\":\"https://platform.theverge.com/wp-content/uploads/sites/2/2025/02/STK109_WINDOWS_C.jpg?quality=90&strip=all&crop=0%2C10.732984293194%2C100%2C78.534031413613&w=1200\",\"publishedAt\":\"2025-09-23T09:01:37Z\",\"content\":\"<ul><li></li><li></li><li></li></ul>\\r\\nMicrosoft Paint is the first app to get new experimental AI features.\\r\\nMicrosoft Paint is the first app to get new experimental AI features.\\r\\nby\\r\\nTom WarrenClose… [+2348 chars]\"},{\"source\":{\"id\":\"wired\",\"name\":\"Wired\"},\"author\":\"Steven Levy\",\"title\":\"Can AI Avoid the Enshittification Trap?\",\"description\":\"Cory Doctorow’s theory of “enshittification” explains how tech platforms rot from within. As AI grows more profitable—and powerful—it risks the same fate.\",\"url\":\"https://www.wired.com/story/can-ai-escape-enshittification-trap/\",\"urlToImage\":\"https://media.wired.com/photos/68f1711918f493b619d097f7/191:100/w_1280,c_limit/Backchannel-Corey-Doctorow-Business-1426357474.jpg\",\"publishedAt\":\"2025-10-17T15:00:00Z\",\"content\":\"I recently vacationed in Italy. As one does these days, I ran my itinerary past GPT-5 for sightseeing suggestions and restaurant recommendations. The bot reported that the top choice for dinner near … [+4039 chars]\"},{\"source\":{\"id\":\"the-verge\",\"name\":\"The Verge\"},\"author\":\"Jess Weatherbed\",\"title\":\"Tado’s new AI features will adaptively heat your home\",\"description\":\"Smart thermostat company Tado is launching new AI-powered features that aim to help users heat their homes more efficiently. Tado says the AI Assist update builds on the company’s existing Auto Assist options by introducing “advanced machine-learning” that “l…\",\"url\":\"https://www.theverge.com/news/783465/tado-x-ai-auto-assist-heating-update\",\"urlToImage\":\"https://platform.theverge.com/wp-content/uploads/sites/2/2025/09/2392_Press_image_AI_Assist_Launch_2025_Screens_EN.jpg?quality=90&strip=all&crop=0%2C9.8167539267016%2C100%2C80.366492146597&w=1200\",\"publishedAt\":\"2025-09-23T08:32:47Z\",\"content\":\"<ul><li></li><li></li><li></li></ul>\\r\\nThe updates are available to Tado X Auto Assist subscribers at no additional cost.\\r\\nThe updates are available to Tado X Auto Assist subscribers at no additional … [+2643 chars]\"},{\"source\":{\"id\":\"the-verge\",\"name\":\"The Verge\"},\"author\":\"Jay Peters\",\"title\":\"1Password says it can fix login security for AI browser agents\",\"description\":\"1Password’s browser extension fills in your passwords automatically when you browse, and now the company has built a similar tool for AI bots browsing the web on your behalf, but for a very different reason. AI tools and browsers built on Claude, Gemini, and …\",\"url\":\"https://www.theverge.com/news/796921/1password-secure-agentic-autofill-ai-browser-agents\",\"urlToImage\":\"https://platform.theverge.com/wp-content/uploads/sites/2/2025/06/STK414_AI_CVIRGINIA_2_C.jpg?quality=90&strip=all&crop=0%2C10.732984293194%2C100%2C78.534031413613&w=1200\",\"publishedAt\":\"2025-10-08T19:44:30Z\",\"content\":\"<ul><li></li><li></li><li></li></ul>\\r\\nIt remembers the passwords that you cant, and hides them from AI bots that cant be trusted to forget.\\r\\nIt remembers the passwords that you cant, and hides them f… [+2591 chars]\"},{\"source\":{\"id\":\"the-verge\",\"name\":\"The Verge\"},\"author\":\"Jay Peters\",\"title\":\"Google is blocking AI searches for Trump and dementia\",\"description\":\"Google appears to have blocked AI search results for the query “does trump show signs of dementia” as well as other questions about his mental acuity, even though it will show AI results for similar searches about other presidents. When making the search abou…\",\"url\":\"https://www.theverge.com/news/789152/google-ai-searches-blocking-trump-dementia-biden\",\"urlToImage\":\"https://platform.theverge.com/wp-content/uploads/sites/2/2025/09/STK466_ELECTION_2024_CVirginia_E.jpg?quality=90&strip=all&crop=0%2C9.9676601489831%2C100%2C80.064679702034&w=1200\",\"publishedAt\":\"2025-09-30T21:17:48Z\",\"content\":\"<ul><li></li><li></li><li></li></ul>\\r\\nAI Mode uncharacteristically pulls up a list of 10 web links instead of a written explanation.\\r\\nAI Mode uncharacteristically pulls up a list of 10 web links inst… [+3536 chars]\"},{\"source\":{\"id\":\"the-verge\",\"name\":\"The Verge\"},\"author\":\"Robert Hart\",\"title\":\"Yelp’s AI can now take reservations over the phone\",\"description\":\"Yelp’s AI-powered solutions promise to answer calls, take reservations, and manage bookings for “understaffed” restaurants. Yelp Host and Yelp Receptionist are part of a broader push from the company and similar platforms embracing AI to streamline customer m…\",\"url\":\"https://www.theverge.com/news/802529/yelp-ai-host-receptionist\",\"urlToImage\":\"https://platform.theverge.com/wp-content/uploads/sites/2/2025/10/Yelp-Host-Biz-Owner-Set-Up-Host-App-for-Reservations.jpg?quality=90&strip=all&crop=8.7676005747126%2C0%2C82.464798850575%2C100&w=1200\",\"publishedAt\":\"2025-10-20T11:52:55Z\",\"content\":\"<ul><li></li><li></li></ul>\\r\\nThe AI-powered receptionist can take bookings and answer questions.\\r\\nThe AI-powered receptionist can take bookings and answer questions.\\r\\nby\\r\\nRobert HartClose\\r\\nRobert Har… [+3477 chars]\"},{\"source\":{\"id\":\"wired\",\"name\":\"Wired\"},\"author\":\"Zeyi Yang\",\"title\":\"How ByteDance Made China’s Most Popular AI Chatbot\",\"description\":\"An AI chatbot developed by TikTok's parent company, ByteDance, is now more popular than DeepSeek. The feat proves that user-friendly design often matters more than having the most advanced AI model.\",\"url\":\"https://www.wired.com/story/bytedance-doubao-chatbot-popularity/\",\"urlToImage\":\"https://media.wired.com/photos/68effb552611849cab159a7b/191:100/w_1280,c_limit/business_china_doubao_chatbot.jpg\",\"publishedAt\":\"2025-10-16T16:07:50Z\",\"content\":\"When Chinese AI startup DeepSeek became a global sensation in January, it not only shocked Silicon Valley but also startled ByteDance, TikToks parent company. The Chinese tech giant had already launc… [+2672 chars]\"},{\"source\":{\"id\":\"the-verge\",\"name\":\"The Verge\"},\"author\":\"Alex Heath\",\"title\":\"Tales from the AI hiring frenzy\",\"description\":\"This is an excerpt of Sources by Alex Heath, a newsletter about AI and the tech industry, syndicated just for The Verge subscribers once a week. The billboard didn't say \\\"Listen Labs.\\\" It didn't say anything about hiring. It consisted of just a plain white ba…\",\"url\":\"https://www.theverge.com/column/791572/ai-hiring-frenzy-startup-challenges\",\"urlToImage\":\"https://platform.theverge.com/wp-content/uploads/sites/2/2025/10/unnamed.jpg?quality=90&strip=all&crop=0%2C20.482863457416%2C100%2C59.034273085168&w=1200\",\"publishedAt\":\"2025-10-03T19:18:43Z\",\"content\":\"<ul><li></li><li></li><li></li></ul>\\r\\nIf youre not OpenAI or Anthropic, hiring is more challenging than ever.\\r\\nIf youre not OpenAI or Anthropic, hiring is more challenging than ever.\\r\\nby\\r\\nAlex HeathC… [+5253 chars]\"}]"
+        }
+      },
+      {
+        "json": {
+          "articles": "[{\"id\":\"118e7fe3714813bad90995dbce81f75f\",\"title\":\"中国工程院外籍院士张亚勤：AI五大新趋势，物理智能快速演进\",\"description\":\"大模型发展进入稳态时，全球基础大模型大约有8-10个。\",\"content\":\"21世纪经济报道记者骆轶琪 北京报道\\nAI产业快速发展，正让诸多行业的迭代呈现加速度趋势。\\n2025骁龙峰会·中国期间，中国工程院外籍院士、清华大学智能产业研究院（AIR）院长张亚勤在演讲中指出，新一代人工智能是原子、分子和比特的融合，是信息智能、物理智能和生物智能的融合。这将带来巨大产业机遇。\\n从产业规模看，移动互联比PC互联时代至少大10倍；在工智能时代，整个产业规模将比前一代至少大100倍。\\nAI产业在过去一年来，也呈现五大新趋势。\\n张亚勤分析道，第一大趋势是从鉴别式AI到生成式AI，如今... [692 chars]\",\"url\":\"https://www.21jingji.com/article/20251001/herald/915b72ff0ec6b63507baf28b580814c6.html\",\"image\":\"https://static.21jingji.com/web_fed/images/qrcode/khd.png\",\"publishedAt\":\"2025-10-01T00:00:00Z\",\"lang\":\"zh\",\"source\":{\"id\":\"82cf1e5ed5d6b74255ea7c2d29340b4b\",\"name\":\"21st Century Business Herald \",\"url\":\"https://www.21jingji.com\",\"country\":\"cn\"}},{\"id\":\"07f37f0fdec97c8cf5c342ed267e3c91\",\"title\":\"谷歌“香蕉”爆火启示：国产垂类AI的危机还是转机？\",\"description\":\"图片AI迎来GPT时刻，大模型吞噬垂类的诅咒还在吗？\",\"content\":\"作者丨樱木 编辑丨江蓠、九黎\\n最近，一根香蕉打破了AI圈的平静。\\n最初可能只是朋友圈病毒式传播的手办图，但随后事情似乎向着疯狂的方向发展，上线不到两周，谷歌旗下的Nano Banana已在全球生产超2亿张图片，亚太地区用户热情度居首。而英伟达CEO黄仁勋成了它的忠实用户，在伦敦，他面对一众记者，公开宣称自己是Nano Banana的忠实粉丝。\\n疯狂的流行带来了另一个好处，就是直接带动了Gemini App的用户增长。在短时间内，Nano Banana为Gemini App带来了超过1000万新用... [3832 chars]\",\"url\":\"https://www.21jingji.com/article/20250929/herald/71df59bc316b4abfa1d3d6a68eb7b0d3.html\",\"image\":\"https://static.21jingji.com/web_fed/images/qrcode/khd.png\",\"publishedAt\":\"2025-09-29T00:00:00Z\",\"lang\":\"zh\",\"source\":{\"id\":\"82cf1e5ed5d6b74255ea7c2d29340b4b\",\"name\":\"21st Century Business Herald \",\"url\":\"https://www.21jingji.com\",\"country\":\"cn\"}},{\"id\":\"879e8a228d9818d40136b29db73e5ff3\",\"title\":\"从用户留存到商业变现：四大维度评估 AI 平台价值，ChatGPT 等头部模型竞争力分析\",\"description\":\"前 HubSpot 高管 Brian 称旧流量渠道遇困，ChatGPT 或成新分发平台，其发展分四阶段，当前处开放平台黄金期。他给企业提差异化策略，还列四评估标准，国内字节、阿里等也在布局。\",\"content\":\"近期，在知名播客节目Lenny\\\\'s Podcast中，Reforge 的创始人兼 CEO、前 HubSpot 增长负责人Brian Balfour分享了他对当前增长与内容分发领域的深刻洞察。从谷歌 SEO 到 Facebook 广告平台，再到苹果应用商店Brian见证并参与过主流分发渠道兴衰的丰富经验。\\n在本次采访中，他基于对市场周期的观察，大胆预测：一个全新的、以ChatGPT 为核心的强大分发平台即将在未来数月内崛起，这将彻底改变企业获取用户的方式，并为敢于率先入局的玩家提供千载难逢的增长... [2013 chars]\",\"url\":\"https://www.21jingji.com/article/20250925/herald/477ef39ff7e482f228d7b388d3091206.html\",\"image\":\"https://static.21jingji.com/web_fed/images/qrcode/khd.png\",\"publishedAt\":\"2025-09-25T00:00:00Z\",\"lang\":\"zh\",\"source\":{\"id\":\"82cf1e5ed5d6b74255ea7c2d29340b4b\",\"name\":\"21st Century Business Herald \",\"url\":\"https://www.21jingji.com\",\"country\":\"cn\"}}]"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Bitable:table:record:batchAdd bitable1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cfb07464-26d5-4d9f-b8a0-e5ee01da20b0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "00f696309e8a27652d8dd77bb37fc325440ae75e75437f7a9f89288520a470d0"
+  },
+  "id": "6OyTq3KwHcmVNQL9",
+  "tags": []
+}
